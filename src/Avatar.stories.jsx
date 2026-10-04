@@ -1,0 +1,1 @@
+import React from"react";export default{title:"Components/Avatar"};export const Placeholder=()=> <div style={{width:64,height:64,borderRadius:"50%",display:"grid",placeItems:"center",background:"#e7eefc",color:"#2463eb",fontWeight:700}}>A</div>;
