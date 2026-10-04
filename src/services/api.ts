@@ -10,4 +10,6 @@ export const api={me:async()=>{const r=await request<{user:User;csrf:string}>("/
   follow:(id:number)=>request<{ok:boolean}>("/api/users/"+id+"/follow",{method:"POST"}),
   unfollow:(id:number)=>request<{ok:boolean}>("/api/users/"+id+"/follow",{method:"DELETE"}),
   storyView:(id:number)=>request<{ok:boolean}>("/api/stories/"+id+"/view",{method:"POST"}),updateProfile:(bio:string,avatar:string)=>request<{user:User}>("/api/me",{method:"PATCH",body:JSON.stringify({bio,avatar})}),
+  settings:()=>request<{settings:{private_account:boolean;email_notifications:boolean}}>("/api/settings"),
+  updateSettings:(settings:{private_account:boolean;email_notifications:boolean})=>request<{ok:boolean}>("/api/settings",{method:"PATCH",body:JSON.stringify(settings)}),
   uploadMedia:async(file:File)=>{const form=new FormData();form.append("file",file);const response=await fetch(API+"/api/media",{method:"POST",credentials:"include",headers:csrfToken?{"X-CSRF-Token":csrfToken}:undefined,body:form});const data=await response.json();if(!response.ok)throw new Error(data.error||"Upload failed");return data as {url:string};}};
