@@ -1,0 +1,2 @@
+import { useState } from "react"; import { Button,Stack,TextField } from "@mui/material"; import { api } from "../services/api";
+export function StoryComposer({onCreated}:{onCreated:()=>void}){const[text,setText]=useState("");async function submit(){if(!text.trim())return;await api.createStory(text.trim());setText("");onCreated()}return <Stack direction={{xs:"column",sm:"row"}} spacing={1}><TextField fullWidth size="small" label="Create a story" value={text} onChange={e=>setText(e.target.value)}/><Button variant="outlined" onClick={submit}>Story</Button></Stack>}
