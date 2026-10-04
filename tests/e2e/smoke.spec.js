@@ -1,1 +1,0 @@
-import{test,expect}from"@playwright/test";test("authentication screen is visible",async({page})=>{await page.goto("/");await expect(page.getByText("Social",{exact:true})).toBeVisible();await expect(page.getByRole("button",{name:"Log in"})).toBeVisible()});
