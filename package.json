@@ -1,1 +1,8 @@
-{"name":"social-network","private":true,"type":"module","scripts":{"dev":"vite","build":"vite build","test":"vitest run","e2e":"playwright test","storybook":"storybook dev -p 6006","build-storybook":"storybook build","check":"npm run build && npm test"},"dependencies":{"@vitejs/plugin-react":"latest","bootstrap":"latest","bootstrap-icons":"latest","react":"latest","react-dom":"latest","vite":"latest"},"devDependencies":{"@playwright/test":"latest","@storybook/addon-essentials":"latest","@storybook/react-vite":"latest","jsdom":"latest","storybook":"latest","vitest":"latest"}}
+{
+  "name":"social-network",
+  "private":true,
+  "type":"module",
+  "scripts":{"dev":"vite","build":"tsc -b && vite build","test":"vitest run","e2e":"playwright test","storybook":"storybook dev -p 6006","build-storybook":"storybook build","check":"npm run build && npm test"},
+  "dependencies":{"@emotion/react":"latest","@emotion/styled":"latest","@mui/icons-material":"latest","@mui/material":"latest","react":"latest","react-dom":"latest"},
+  "devDependencies":{"@playwright/test":"latest","@storybook/addon-essentials":"latest","@storybook/react-vite":"latest","@types/react":"latest","@types/react-dom":"latest","@vitejs/plugin-react":"latest","jsdom":"latest","storybook":"latest","typescript":"latest","vite":"latest","vitest":"latest"}
+}
