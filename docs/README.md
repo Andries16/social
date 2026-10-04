@@ -4,6 +4,7 @@
 - [Security](./security.md)
 - [Testing](./testing.md)
 - [API](./api.md)
+- [Development](./development.md)
 - [Contributing](./contributing.md)
 
-The project is intentionally limited to HTML, CSS, JavaScript, PHP, Bootstrap and React for application development.
+The application frontend is React + TypeScript + MUI. Vite powers development/builds, Storybook documents components, Vitest handles unit tests, and Playwright handles browser E2E tests. PHP provides the backend API with SQLite for development persistence.
