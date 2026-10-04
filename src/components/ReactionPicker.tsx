@@ -1,0 +1,3 @@
+import { Button,Menu,MenuItem } from "@mui/material"; import { useState } from "react"; import { api } from "../services/api";
+const reactions=[["like","Like"],["love","Love"],["haha","Haha"],["wow","Wow"],["sad","Sad"],["angry","Angry"]] as const;
+export function ReactionPicker({postId,onChanged}:{postId:number;onChanged:()=>void}){const[anchor,setAnchor]=useState<null|HTMLElement>(null);async function select(reaction:string){await api.react(postId,reaction);setAnchor(null);onChanged()}return <><Button onClick={e=>setAnchor(e.currentTarget)}>React</Button><Menu anchorEl={anchor} open={Boolean(anchor)} onClose={()=>setAnchor(null)}>{reactions.map(([value,label])=><MenuItem key={value} onClick={()=>select(value)}>{label}</MenuItem>)}</Menu></>}
