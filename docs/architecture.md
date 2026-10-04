@@ -1,16 +1,35 @@
 # Architecture
 
-React is the presentation and interaction layer. Bootstrap provides responsive layout and component styling, with local CSS for product-specific presentation.
+The application is split into a typed React presentation layer and a PHP HTTP/API layer.
 
-PHP is the HTTP/API layer. It owns authentication, authorization, validation and persistence. SQLite is the development persistence layer.
+## Frontend
+- React + TypeScript
+- MUI as the component/design library
+- Vite for development/build tooling
+- Feature/page separation with reusable components
+- services/api.ts owns HTTP communication
+- theme.ts owns MUI design tokens and component defaults
 
-The codebase is organized around separation of responsibilities. React components should remain focused on rendering and interaction; API communication is isolated behind a small HTTP boundary; PHP route handlers should delegate domain behavior to services as the project grows.
+Target structure:
+src/
+  components/
+  features/
+  hooks/
+  pages/
+  services/
+  state/
+  theme.ts
+  types.ts
 
-SOLID goals:
-- Single Responsibility: each component/service has one reason to change.
-- Open/Closed: new features are isolated rather than modifying unrelated behavior.
-- Liskov Substitution: stable data contracts are used at boundaries.
-- Interface Segregation: APIs expose focused operations.
-- Dependency Inversion: UI depends on HTTP contracts, not persistence details.
+## Backend
+PHP remains the application API and SQLite is the development persistence layer. The current endpoint bootstrap is being migrated toward controllers, services, repositories, validators and middleware.
 
-Future production work should move the current bootstrap schema into versioned migrations and extract PHP controllers/services/repositories without changing the public API contract.
+## SOLID
+- Single Responsibility: components, services and controllers have one reason to change.
+- Open/Closed: UI behavior is extended through composition and reusable MUI components.
+- Liskov Substitution: typed component props preserve substitutability.
+- Interface Segregation: API types expose only data required by each feature.
+- Dependency Inversion: React pages depend on the typed API service rather than fetch directly.
+
+## Responsive design
+MUI breakpoints are the primary responsive mechanism. Layouts must work from narrow mobile screens through desktop widths.
