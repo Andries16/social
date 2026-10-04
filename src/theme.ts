@@ -1,0 +1,2 @@
+import { createTheme } from "@mui/material/styles";
+export const theme=createTheme({palette:{mode:"light",primary:{main:"#2563eb"},background:{default:"#f5f7fb",paper:"#ffffff"}},shape:{borderRadius:14},typography:{fontFamily:'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'},components:{MuiButton:{defaultProps:{disableElevation:true}},MuiCard:{styleOverrides:{root:{border:"1px solid rgba(15,23,42,.07)",boxShadow:"0 8px 30px rgba(15,23,42,.05)"}}}}});
