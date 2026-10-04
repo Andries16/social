@@ -1,0 +1,2 @@
+import { Stack,Typography } from "@mui/material"; import type { Story } from "../types"; import { Avatar } from "./Avatar";
+export function StoryStrip({stories}:{stories:Story[]}){return <Stack direction="row" spacing={2} sx={{overflowX:"auto",pb:1}}>{stories.map(s=><Stack key={s.id} alignItems="center" sx={{minWidth:76}}><Avatar user={s.user} size={58}/><Typography variant="caption" noWrap>{s.user.name}</Typography></Stack>)}</Stack>}
