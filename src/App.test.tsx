@@ -1,0 +1,1 @@
+import { describe,expect,it } from "vitest"; describe("Social",()=>{it("has the expected product name",()=>expect("Social").toBe("Social"));});
