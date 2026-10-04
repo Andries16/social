@@ -1,0 +1,4 @@
+<?php declare(strict_types=1);
+$db=new PDO('sqlite:'.__DIR__.'/social.sqlite');$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+$db->exec('CREATE TABLE IF NOT EXISTS migrations(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT UNIQUE NOT NULL,applied_at TEXT NOT NULL)');
+foreach(glob(__DIR__.'/migrations/*.sql') as $file){$name=basename($file);$q=$db->prepare('SELECT 1 FROM migrations WHERE name=?');$q->execute([$name]);if($q->fetchColumn())continue;$db->beginTransaction();try{$db->exec(file_get_contents($file));$i=$db->prepare('INSERT INTO migrations(name,applied_at)VALUES(?,?)');$i->execute([$name,date('c')]);$db->commit();echo "Applied ".$name."\n";}catch(Throwable $e){$db->rollBack();throw $e;}}
