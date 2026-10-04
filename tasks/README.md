@@ -19,13 +19,13 @@ The frontend uses React + TypeScript + MUI. The backend uses PHP with SQLite for
 - [x] Stories foundation
 - [x] User listing
 - [x] Private messaging foundation
-- [ ] Follow/friend relationships
-- [ ] Notifications
+- [x] Follow/friend relationships
+- [x] Notifications
 - [ ] Real image/file uploads and profile photo uploads
 - [ ] Post editing/deletion
 - [ ] Comment editing/deletion
 - [ ] Rich reaction picker
-- [ ] Story viewer and seen state
+- [x] Story viewer and seen state
 - [ ] Search
 - [ ] Pagination/infinite scroll
 - [ ] Account, privacy and notification settings
