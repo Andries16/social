@@ -10,7 +10,7 @@ final class StoryService
 
     public function list(int $viewerId): array
     {
-        return ['stories' => $this->stories->listVisible($viewerId)];
+        return $this->stories->listVisible($viewerId);
     }
 
     public function create(int $userId, array $payload): void
