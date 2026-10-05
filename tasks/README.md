@@ -27,7 +27,7 @@ The frontend uses React + TypeScript + MUI. The backend uses PHP with SQLite for
 - [x] Image/file upload foundation
 - [x] Pagination/load more
 - [x] Account, privacy and notification settings
-- [ ] Public user profiles and follow UI
+- [x] Public user profiles and follow UI
 - [ ] Infinite scroll
 - [ ] Rich reaction history/counts by reaction type
 - [ ] Media galleries and post attachment management
@@ -36,16 +36,16 @@ The frontend uses React + TypeScript + MUI. The backend uses PHP with SQLite for
 - [ ] Feature-based React folders and reusable MUI components
 - [ ] PHP controllers/services/repositories/validators
 - [ ] Database migration lifecycle
-- [ ] Centralized API validation and authorization
+- [ ] Centralized API validation and authorization (privacy-aware read authorization is now enforced on profiles, feed and stories)
 - [x] CSRF protection for all state-changing HTTP methods
-- [ ] Secure session cookie configuration
+- [x] Secure session cookie configuration
 - [ ] Rate limiting and abuse protection
 - [ ] Complete security header policy including CSP
 - [ ] Accessibility audit
-- [ ] Meaningful unit coverage for API client and components
+- [ ] Meaningful unit coverage for API client and components (API client coverage is in place; component coverage remains)
 - [ ] Full E2E authentication/social flows
 - [x] Storybook foundation
 - [ ] Storybook component catalog
 - [x] CI gates for TypeScript, frontend tests, build, Storybook and PHP syntax
-- [ ] E2E backend startup and authenticated social-flow coverage
+- [x] E2E backend startup and authenticated social-flow coverage (backend startup and registration flow are covered; broader social flows remain)
 - [ ] Production deployment documentation
