@@ -49,4 +49,4 @@ if($r==='/api/media'&&$m==='POST'){
     out(['url'=>$scheme.'://'.($_SERVER['HTTP_HOST']??'localhost').'/uploads/'.$name]);
 }
 out(['error'=>'Not found'],404);
-}catch(\InvalidArgumentException $e){out(['error'=>$e->getMessage()],422);catch(Throwable $e){out(['error'=>'Server error'],500);}}
+}catch(\InvalidArgumentException $e){out(['error'=>$e->getMessage()],422);}catch(Throwable $e){out(['error'=>'Server error'],500);}
