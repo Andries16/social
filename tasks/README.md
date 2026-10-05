@@ -34,7 +34,7 @@ The frontend uses React + TypeScript + MUI. The backend uses PHP with SQLite for
 
 ## Architecture and quality
 - [ ] Feature-based React folders and reusable MUI components
-- [ ] PHP controllers/services/repositories/validators (HTTP bootstrap and shared helpers extracted; domain controllers remain)
+- [ ] PHP controllers/services/repositories/validators (HTTP bootstrap and route groups extracted; user profile now has repository/service separation; remaining domains still contain persistence logic)
 - [ ] Database migration lifecycle
 - [ ] Centralized API validation and authorization (privacy-aware read authorization is now enforced on profiles, feed and stories; input bounds are now enforced server-side)
 - [x] CSRF protection for all state-changing HTTP methods
