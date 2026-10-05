@@ -8,39 +8,44 @@ The frontend uses React + TypeScript + MUI. The backend uses PHP with SQLite for
 - [x] MUI design system and responsive application shell
 - [x] PHP API + SQLite development persistence
 - [ ] Production environment configuration
-- [ ] Database migrations and seed command
+- [x] Database migration and seed scripts
+- [ ] Remove runtime schema bootstrap in favor of migrations
 
 ## Social features
 - [x] Registration/login/logout
-- [x] Profiles, bio and avatar URL
+- [x] Profiles, bio and avatar
 - [x] Feed and posts
+- [x] Post creation, editing and deletion
 - [x] Likes/reactions foundation
 - [x] Comments
-- [x] Stories foundation
-- [x] User listing
+- [x] Comment editing and deletion
+- [x] Stories, viewer and seen state
+- [x] User search/listing
 - [x] Private messaging foundation
 - [x] Follow/friend relationships
-- [x] Notifications
-- [ ] Real image/file uploads and profile photo uploads
-- [ ] Post editing/deletion
-- [ ] Comment editing/deletion
-- [ ] Rich reaction picker
-- [x] Story viewer and seen state
-- [ ] Search
-- [ ] Pagination/infinite scroll
-- [ ] Account, privacy and notification settings
+- [x] Notifications and read state
+- [x] Image/file upload foundation
+- [x] Pagination/load more
+- [x] Account, privacy and notification settings
+- [ ] Public user profiles and follow UI
+- [ ] Infinite scroll
+- [ ] Rich reaction history/counts by reaction type
+- [ ] Media galleries and post attachment management
 
 ## Architecture and quality
 - [ ] Feature-based React folders and reusable MUI components
 - [ ] PHP controllers/services/repositories/validators
-- [ ] Database migrations
-- [ ] API validation and authorization
-- [ ] CSRF protection and secure session configuration
-- [ ] Rate limiting and security headers
+- [ ] Database migration lifecycle
+- [ ] Centralized API validation and authorization
+- [x] CSRF protection for all state-changing HTTP methods
+- [ ] Secure session cookie configuration
+- [ ] Rate limiting and abuse protection
+- [ ] Complete security header policy including CSP
 - [ ] Accessibility audit
-- [ ] Unit coverage for API contracts and components
+- [ ] Meaningful unit coverage for API client and components
 - [ ] Full E2E authentication/social flows
 - [x] Storybook foundation
 - [ ] Storybook component catalog
-- [ ] CI quality gates for TypeScript, PHP, tests and Storybook
+- [x] CI gates for TypeScript, frontend tests, build, Storybook and PHP syntax
+- [ ] E2E backend startup and authenticated social-flow coverage
 - [ ] Production deployment documentation
