@@ -47,5 +47,5 @@ The frontend uses React + TypeScript + MUI. The backend uses PHP with SQLite for
 - [x] Storybook foundation
 - [ ] Storybook component catalog
 - [x] CI gates for TypeScript, frontend tests, build, Storybook and PHP syntax
-- [x] E2E backend startup and authenticated social-flow coverage (backend startup and registration flow are covered; broader social flows remain)
+- [ ] E2E backend startup and authenticated social-flow coverage (backend startup and registration flow are covered; broader social flows remain)
 - [ ] Production deployment documentation
