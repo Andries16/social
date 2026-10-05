@@ -27,12 +27,16 @@ test("authenticated user can publish a story, post and comment", async ({ page }
   await expect(page.getByLabel("Create a story")).toBeVisible({ timeout: 10000 });
   await page.getByLabel("Create a story").fill("E2E story");
   await page.getByRole("button", { name: "Story", exact: true }).click();
+  await expect(page.getByRole("button").filter({ hasText: "Social E2E User" })).toHaveCount(1);
 
   await page.getByLabel("What's on your mind?").fill("E2E post");
   await page.getByRole("button", { name: "Publish", exact: true }).click();
 
   const post = page.locator(".MuiCard-root").filter({ hasText: "E2E post" }).first();
   await expect(post).toContainText("E2E post", { timeout: 10000 });
+  await post.getByRole("button", { name: "React" }).click();
+  await page.getByRole("menuitem", { name: "Love" }).click();
+  await expect(post).toContainText("love 1", { timeout: 10000 });
   const comment = post.getByPlaceholder("Write a comment...");
   await comment.fill("E2E comment");
   await post.getByRole("button", { name: "Comment" }).click();
