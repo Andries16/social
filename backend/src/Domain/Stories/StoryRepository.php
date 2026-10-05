@@ -54,7 +54,7 @@ final class StoryRepository
                     COALESCE((SELECT private_account FROM user_settings WHERE user_id=s.user_id),0)
                         private_account
              FROM stories s
-             WHERE s.id=?',
+             WHERE s.id=? AND datetime(s.created_at) >= datetime('now','-1 day')',
         );
         $query->execute([$storyId]);
         $story = $query->fetch();
