@@ -1,4 +1,4 @@
-export interface User { id:number; name:string; email?:string; bio:string; avatar:string; }
+export interface User { id:number; name:string; email?:string|null; bio:string; avatar:string; }
 export interface Comment { id:number; text:string; created_at:string; user:User; }
 export interface Post { id:number; body:string; image:string; created_at:string; likes:number; user:User; comments:Comment[]; }
 export interface Story { id:number; text:string; created_at:string; user:User; }
