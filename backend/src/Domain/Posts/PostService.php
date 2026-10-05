@@ -2,22 +2,19 @@
 
 namespace Social\Domain\Posts;
 
+use Social\Domain\Shared\AuthorizationException;
+
 final class PostService
 {
     private const REACTIONS = ['like', 'love', 'laugh', 'wow', 'sad', 'angry'];
 
-    public function __construct(private PostRepository $posts)
-    {
-    }
+    public function __construct(private PostRepository $posts) {}
 
     public function feed(int $viewerId, int $page, int $limit): array
     {
         $result = $this->posts->listForFeed($viewerId, $page, $limit);
         $items = $result['posts'];
-
-        if (count($items) > $limit) {
-            array_pop($items);
-        }
+        if (count($items) > $limit) array_pop($items);
 
         foreach ($items as &$post) {
             $post['media'] = $this->posts->media((int) $post['id']);
@@ -30,32 +27,17 @@ final class PostService
                 'angry' => (int) $post['reaction_angry'],
             ];
             $post['comments'] = $this->posts->comments((int) $post['id']);
-            $post['user'] = [
-                'id' => $post['uid'],
-                'name' => $post['name'],
-                'bio' => $post['bio'],
-                'avatar' => $post['avatar'],
-            ];
+            $post['user'] = ['id' => $post['uid'], 'name' => $post['name'], 'bio' => $post['bio'], 'avatar' => $post['avatar']];
         }
 
-        return [
-            'posts' => $items,
-            'page' => $page,
-            'hasMore' => $result['hasMore'],
-        ];
+        return ['posts' => $items, 'page' => $page, 'hasMore' => $result['hasMore']];
     }
 
     public function create(int $userId, array $payload): void
     {
         $body = trim((string) ($payload['body'] ?? ''));
-        if ($body === '' || mb_strlen($body) > 5000) {
-            throw new \InvalidArgumentException(
-                'Post text must contain between 1 and 5000 characters',
-            );
-        }
-
+        if ($body === '' || mb_strlen($body) > 5000) throw new \InvalidArgumentException('Post text must contain between 1 and 5000 characters');
         $media = $this->validateMedia($payload['media'] ?? []);
-
         $image = trim((string) ($payload['image'] ?? ($media[0] ?? '')));
         $this->posts->create($userId, $body, $image, $media);
     }
@@ -64,14 +46,8 @@ final class PostService
     {
         $this->authorizeOwner($userId, $postId);
         $body = trim((string) ($payload['body'] ?? ''));
-        if ($body === '' || mb_strlen($body) > 5000) {
-            throw new \InvalidArgumentException(
-                'Post text must contain between 1 and 5000 characters',
-            );
-        }
-
+        if ($body === '' || mb_strlen($body) > 5000) throw new \InvalidArgumentException('Post text must contain between 1 and 5000 characters');
         $media = $this->validateMedia($payload['media'] ?? []);
-
         $image = trim((string) ($payload['image'] ?? ($media[0] ?? '')));
         $this->posts->update($postId, $body, $image);
         $this->posts->replaceMedia($postId, $media);
@@ -85,31 +61,17 @@ final class PostService
 
     public function react(int $userId, int $postId, array $payload): void
     {
-        if (!$this->posts->canView($postId, $userId)) {
-            throw new \RuntimeException('Post not found');
-        }
-
+        if (!$this->posts->canView($postId, $userId)) throw new \RuntimeException('Post not found');
         $reaction = (string) ($payload['reaction'] ?? 'like');
-        if (!in_array($reaction, self::REACTIONS, true)) {
-            throw new \InvalidArgumentException('Unsupported reaction');
-        }
-
+        if (!in_array($reaction, self::REACTIONS, true)) throw new \InvalidArgumentException('Unsupported reaction');
         $this->posts->react($postId, $userId, $reaction);
     }
 
     public function comment(int $userId, int $postId, array $payload): void
     {
-        if (!$this->posts->canView($postId, $userId)) {
-            throw new \RuntimeException('Post not found');
-        }
-
+        if (!$this->posts->canView($postId, $userId)) throw new \RuntimeException('Post not found');
         $text = trim((string) ($payload['text'] ?? ''));
-        if ($text === '' || mb_strlen($text) > 2000) {
-            throw new \InvalidArgumentException(
-                'Comment must contain between 1 and 2000 characters',
-            );
-        }
-
+        if ($text === '' || mb_strlen($text) > 2000) throw new \InvalidArgumentException('Comment must contain between 1 and 2000 characters');
         $this->posts->createComment($postId, $userId, $text);
     }
 
@@ -117,12 +79,7 @@ final class PostService
     {
         $this->authorizeCommentOwner($userId, $commentId);
         $text = trim((string) ($payload['text'] ?? ''));
-        if ($text === '' || mb_strlen($text) > 2000) {
-            throw new \InvalidArgumentException(
-                'Comment must contain between 1 and 2000 characters',
-            );
-        }
-
+        if ($text === '' || mb_strlen($text) > 2000) throw new \InvalidArgumentException('Comment must contain between 1 and 2000 characters');
         $this->posts->updateComment($commentId, $text);
     }
 
@@ -134,47 +91,29 @@ final class PostService
 
     private function validateMedia(mixed $value): array
     {
-        if (!is_array($value) || count($value) > 10) {
-            throw new \InvalidArgumentException('A post can contain at most 10 images');
-        }
-
+        if (!is_array($value) || count($value) > 10) throw new \InvalidArgumentException('A post can contain at most 10 images');
         $media = [];
         foreach ($value as $url) {
             $url = trim((string) $url);
-            if ($url === '' || mb_strlen($url) > 2048) {
-                throw new \InvalidArgumentException('Invalid post media URL');
-            }
-
+            if ($url === '' || mb_strlen($url) > 2048) throw new \InvalidArgumentException('Invalid post media URL');
             $path = parse_url($url, PHP_URL_PATH);
-            if ($path === false || !str_starts_with((string) $path, '/uploads/')) {
-                throw new \InvalidArgumentException('Post media must reference an uploaded file');
-            }
-
+            if ($path === false || !str_starts_with((string) $path, '/uploads/')) throw new \InvalidArgumentException('Post media must reference an uploaded file');
             $media[] = $url;
         }
-
         return $media;
     }
 
     private function authorizeOwner(int $userId, int $postId): void
     {
         $ownerId = $this->posts->findOwnerId($postId);
-        if ($ownerId === null) {
-            throw new \RuntimeException('Post not found');
-        }
-        if ($ownerId !== $userId) {
-            throw new \LogicException('Forbidden');
-        }
+        if ($ownerId === null) throw new \RuntimeException('Post not found');
+        if ($ownerId !== $userId) throw new AuthorizationException('Forbidden');
     }
 
     private function authorizeCommentOwner(int $userId, int $commentId): void
     {
         $ownerId = $this->posts->findCommentOwnerId($commentId);
-        if ($ownerId === null) {
-            throw new \RuntimeException('Comment not found');
-        }
-        if ($ownerId !== $userId) {
-            throw new \LogicException('Forbidden');
-        }
+        if ($ownerId === null) throw new \RuntimeException('Comment not found');
+        if ($ownerId !== $userId) throw new AuthorizationException('Forbidden');
     }
 }
