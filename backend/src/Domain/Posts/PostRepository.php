@@ -50,7 +50,13 @@ final class PostRepository
         $offset = ($page - 1) * $limit;
         $query = $this->db->prepare(
             'SELECT p.*,u.id uid,u.name,u.bio,u.avatar,
-                    (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id) likes
+                    (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id) likes,
+                    (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id AND r.reaction='like') reaction_like,
+                    (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id AND r.reaction='love') reaction_love,
+                    (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id AND r.reaction='laugh') reaction_laugh,
+                    (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id AND r.reaction='wow') reaction_wow,
+                    (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id AND r.reaction='sad') reaction_sad,
+                    (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id AND r.reaction='angry') reaction_angry
              FROM posts p
              JOIN users u ON u.id=p.user_id
              WHERE COALESCE((SELECT private_account FROM user_settings s WHERE s.user_id=p.user_id),0)=0
