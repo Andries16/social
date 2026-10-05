@@ -23,6 +23,19 @@ describe("Social API client",()=>{
     await api.users("Jane");
     expect(fetchMock.mock.calls[2]?.[1]).toEqual(expect.objectContaining({headers:expect.not.objectContaining({"X-CSRF-Token":"test-csrf"})}));
   });
+  it("requests follow status from the dedicated endpoint",async()=>{
+    const fetchMock=vi.spyOn(globalThis,"fetch").mockResolvedValue({ok:true,json:async()=>({following:true})} as Response);
+    await expect(api.followStatus(42)).resolves.toEqual({following:true});
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("/api/users/42/follow"),
+      expect.any(Object),
+    );
+  });
+  it("keeps the stories API response flat",async()=>{
+    const fetchMock=vi.spyOn(globalThis,"fetch").mockResolvedValue({ok:true,json:async()=>({stories:[]})} as Response);
+    await expect(api.stories()).resolves.toEqual({stories:[]});
+    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining("/api/stories"),expect.any(Object));
+  });
   it("surfaces API errors",async()=>{
     vi.spyOn(globalThis,"fetch").mockResolvedValue({ok:false,json:async()=>({error:"Forbidden"})} as Response);
     await expect(api.users("Jane")).rejects.toThrow("Forbidden");
