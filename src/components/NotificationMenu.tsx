@@ -23,7 +23,7 @@ export function NotificationMenu() {
 
   const markRead = async (notification: Notification) => {
     if (!notification.read_at) {
-      await api.readNotification(notification.id);
+      await api.markNotificationRead(notification.id);
       setItems((current) =>
         current.map((item) =>
           item.id === notification.id
