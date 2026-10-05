@@ -1,10 +1,10 @@
 # Security
 
-Passwords use `password_hash`/`password_verify`. Authentication is server-side session based. Mutating API routes require the session CSRF token, including DELETE requests, and resource mutations enforce ownership where applicable.
+Passwords use `password_hash`/`password_verify`. Authentication is server-side session based. Mutating API routes require the session CSRF token, including DELETE requests, and resource mutations enforce ownership where applicable. Private-account read authorization is enforced for profiles, feed posts and stories.
 
 Before production:
 - enable HTTPS and configure Secure, HttpOnly and SameSite session cookies;
-- restrict CORS to an explicit trusted-origin allowlist;
+- restrict CORS to an explicit trusted-origin allowlist; the API reads `SOCIAL_ALLOWED_ORIGINS` in production and defaults to local Vite origins for development;
 - validate and normalize every input with consistent server-side constraints;
 - add authorization/privacy checks for reads as well as mutations;
 - add rate limiting and abuse protection for authentication, messaging and uploads;
