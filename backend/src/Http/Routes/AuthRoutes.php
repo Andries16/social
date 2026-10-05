@@ -55,6 +55,8 @@ function handleAuthRoutes(string $r, string $m): bool
             $auth->updateSettings((int) $user['id'], b());
             out(['ok' => true]);
         }
+    } catch (\Social\Domain\Shared\ConflictException $e) {
+        out(['error' => $e->getMessage()], 409);
     } catch (\InvalidArgumentException $e) {
         out(['error' => $e->getMessage()], 422);
     } catch (\RuntimeException $e) {
