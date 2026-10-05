@@ -1,13 +1,24 @@
 # Testing
 
-Unit tests use Vitest. End-to-end tests use Playwright. Storybook is used for isolated UI development.
+TypeScript:
+- `npx tsc --noEmit`
 
-Local commands:
-```
-npm test
-npm run e2e
-npm run storybook
-npm run build-storybook
-```
+Unit tests:
+- `npm test`
+- API client behavior is covered with Vitest.
+- Shared UI components have dependency-free server-rendering tests where practical.
 
-The first E2E smoke test validates that the React application renders its authentication boundary. Additional tests should cover registration, login, post creation, reactions, comments, stories, profile editing and messaging.
+Build:
+- `npm run build`
+
+Storybook:
+- `npm run build-storybook`
+
+Browser E2E:
+- `npm run e2e`
+- Playwright starts the migrated PHP backend and Vite development server.
+- Authentication and an authenticated social flow cover registration, story creation, post creation, and commenting.
+
+PHP:
+- `find backend -name "*.php" -print0 | xargs -0 -n1 php -l`
+- `php backend/migrate.php` applies migrations in lexical order and records each migration exactly once.
