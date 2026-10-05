@@ -19,9 +19,10 @@ function handleAuthRoutes(string $r, string $m): bool
 
         if ($r === '/api/login' && $m === 'POST') {
             rateLimit('login', clientKey(), 10, 900);
+            $payload = b();
             $user = $auth->authenticate(
-                (string) (b()['email'] ?? ''),
-                (string) (b()['password'] ?? ''),
+                (string) ($payload['email'] ?? ''),
+                (string) ($payload['password'] ?? ''),
             );
             session_regenerate_id(true);
             $_SESSION['user_id'] = $user['id'];
