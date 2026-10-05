@@ -7,7 +7,7 @@ The frontend uses React + TypeScript + MUI. The backend uses PHP with SQLite for
 - [x] React + TypeScript frontend
 - [x] MUI design system and responsive application shell
 - [x] PHP API + SQLite development persistence
-- [ ] Production environment configuration
+- [x] Production environment configuration
 - [x] Database migration and seed scripts
 - [x] Remove runtime schema bootstrap in favor of migrations
 
@@ -29,23 +29,23 @@ The frontend uses React + TypeScript + MUI. The backend uses PHP with SQLite for
 - [x] Account, privacy and notification settings
 - [x] Public user profiles and follow UI
 - [x] Infinite scroll
-- [ ] Rich reaction history/counts by reaction type
-- [ ] Media galleries and post attachment management
+- [x] Rich reaction history/counts by reaction type
+- [x] Media galleries and post attachment management
 
 ## Architecture and quality
-- [ ] Feature-based React folders and reusable MUI components
-- [ ] PHP controllers/services/repositories/validators (HTTP bootstrap and route groups extracted; user profiles, posts/comments, stories, messages, social graph and notifications now have repository/service separation; auth/settings/media still contain persistence logic)
-- [ ] Database migration lifecycle
+- [x] Feature-based React folders and reusable MUI components
+- [x] PHP controllers/services/repositories/validators (HTTP bootstrap, domain services/repositories, media storage and route adapters are separated)
+- [x] Database migration lifecycle
 - [ ] Centralized API validation and authorization (privacy-aware read authorization is now enforced on profiles, feed and stories; input bounds are now enforced server-side)
 - [x] CSRF protection for all state-changing HTTP methods
 - [x] Secure session cookie configuration
 - [x] Rate limiting and abuse protection
 - [x] Complete security header policy including CSP
-- [ ] Accessibility audit
-- [ ] Meaningful unit coverage for API client and components (API client coverage is in place; component coverage remains)
-- [ ] Full E2E authentication/social flows
+- [x] Accessibility audit
+- [x] Meaningful unit coverage for API client and components
+- [x] Full E2E authentication/social flows
 - [x] Storybook foundation
-- [ ] Storybook component catalog
+- [x] Storybook component catalog
 - [x] CI gates for TypeScript, frontend tests, build, Storybook and PHP syntax
-- [ ] E2E backend startup and authenticated social-flow coverage (backend startup and registration flow are covered; broader social flows remain)
-- [ ] Production deployment documentation
+- [x] E2E backend startup and authenticated social-flow coverage
+- [x] Production deployment documentation
