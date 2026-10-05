@@ -34,6 +34,19 @@ final class SocialGraphService
         $this->graph->unfollow($userId, $targetId);
     }
 
+    public function status(int $userId, int $targetId): bool
+    {
+        if ($targetId === $userId) {
+            return false;
+        }
+
+        if (!$this->graph->userExists($targetId)) {
+            throw new \RuntimeException('User not found');
+        }
+
+        return $this->graph->isFollowing($userId, $targetId);
+    }
+
     public function list(int $userId, string $relation): array
     {
         if (!in_array($relation, ['followers', 'following'], true)) {
