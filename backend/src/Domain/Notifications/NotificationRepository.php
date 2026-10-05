@@ -35,6 +35,14 @@ final class NotificationRepository
         return $items;
     }
 
+    public function create(int $userId, string $type, int $actorId): void
+    {
+        $query = $this->db->prepare(
+            'INSERT INTO notifications(user_id,type,actor_id,created_at) VALUES(?,?,?,?)',
+        );
+        $query->execute([$userId, $type, $actorId, date('c')]);
+    }
+
     public function markRead(int $notificationId, int $userId): void
     {
         $query = $this->db->prepare(
