@@ -20,6 +20,14 @@ final class PostService
         }
 
         foreach ($items as &$post) {
+            $post['reactionCounts'] = [
+                'like' => (int) $post['reaction_like'],
+                'love' => (int) $post['reaction_love'],
+                'laugh' => (int) $post['reaction_laugh'],
+                'wow' => (int) $post['reaction_wow'],
+                'sad' => (int) $post['reaction_sad'],
+                'angry' => (int) $post['reaction_angry'],
+            ];
             $post['comments'] = $this->posts->comments((int) $post['id']);
             $post['user'] = [
                 'id' => $post['uid'],
