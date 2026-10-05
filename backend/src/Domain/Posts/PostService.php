@@ -20,6 +20,7 @@ final class PostService
         }
 
         foreach ($items as &$post) {
+            $post['media'] = $this->posts->media((int) $post['id']);
             $post['reactionCounts'] = [
                 'like' => (int) $post['reaction_like'],
                 'love' => (int) $post['reaction_love'],
@@ -53,7 +54,10 @@ final class PostService
             );
         }
 
-        $this->posts->create($userId, $body, trim((string) ($payload['image'] ?? '')));
+        $media = array_values(array_filter(array_map('strval', (array) ($payload['media'] ?? []))));
+        if (count($media) > 10) throw new \InvalidArgumentException('A post can contain at most 10 images');
+        $image = trim((string) ($payload['image'] ?? ($media[0] ?? '')));
+        $this->posts->create($userId, $body, $image, $media);
     }
 
     public function update(int $userId, int $postId, array $payload): void
@@ -66,7 +70,11 @@ final class PostService
             );
         }
 
-        $this->posts->update($postId, $body, (string) ($payload['image'] ?? ''));
+        $media = array_values(array_filter(array_map('strval', (array) ($payload['media'] ?? []))));
+        if (count($media) > 10) throw new \InvalidArgumentException('A post can contain at most 10 images');
+        $image = trim((string) ($payload['image'] ?? ($media[0] ?? '')));
+        $this->posts->update($postId, $body, $image);
+        $this->posts->replaceMedia($postId, $media);
     }
 
     public function delete(int $userId, int $postId): void
