@@ -22,7 +22,7 @@ src/
   types.ts
 
 ## Backend
-PHP remains the application API and SQLite is the development persistence layer. The HTTP bootstrap is isolated in `backend/src/Http/Bootstrap.php`. Shared HTTP helpers live in `backend/src/Http/Support.php`, and authentication, user/profile and post/comment route groups are progressively extracted into `backend/src/Http/Routes/`. `backend/routes.php` remains the compatibility dispatcher while the public API stays unchanged. The next refactor stage is to move domain logic from these route handlers into services and repositories.
+PHP remains the application API and SQLite is the development persistence layer. The HTTP bootstrap is isolated in `backend/src/Http/Bootstrap.php`. Shared HTTP helpers live in `backend/src/Http/Support.php`, and authentication, user/profile and post/comment route groups are progressively extracted into `backend/src/Http/Routes/`. `backend/routes.php` remains the compatibility dispatcher while the public API stays unchanged. Domain logic is now beginning to move into explicit repositories and services under `backend/src/Domain/`; the user-profile read path is the first complete example. Route handlers should progressively become HTTP adapters rather than owning persistence and authorization policy.
 
 ## SOLID
 - Single Responsibility: components, services and controllers have one reason to change.
