@@ -1,1 +1,1 @@
-export default{stories:["../src/**/*.stories.@(js|jsx|ts|tsx)"],addons:["@storybook/addon-essentials"],framework:{name:"@storybook/react-vite",options:{}}};
+export default{stories:["../src/**/*.stories.@(js|jsx|ts|tsx)"],framework:{name:"@storybook/react-vite",options:{}}};
