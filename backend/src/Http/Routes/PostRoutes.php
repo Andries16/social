@@ -4,9 +4,6 @@ function handlePostRoutes(string $r, string $m): bool
 {
     global $db;
 
-    require_once __DIR__ . '/../../Domain/Posts/PostRepository.php';
-    require_once __DIR__ . '/../../Domain/Posts/PostService.php';
-
     $posts = new \Social\Domain\Posts\PostService(
         new \Social\Domain\Posts\PostRepository($db),
     );
