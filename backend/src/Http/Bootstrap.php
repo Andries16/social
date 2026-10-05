@@ -45,10 +45,10 @@ final class Bootstrap
             exit;
         }
 
+        require_once __DIR__ . '/../Infrastructure/Database.php';
+
         global $db;
-        $db = new \PDO('sqlite:' . __DIR__ . '/../../social.sqlite');
-        $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $db->exec('PRAGMA foreign_keys=ON');
+        $db = \Social\Infrastructure\Database::connect(__DIR__ . '/../../social.sqlite');
 
         require __DIR__ . '/Support.php';
         require __DIR__ . '/../../routes.php';
