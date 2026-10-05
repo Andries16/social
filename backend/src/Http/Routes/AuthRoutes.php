@@ -3,10 +3,7 @@
 function handleAuthRoutes(string $r, string $m): bool
 {
     global $db;
-
-    $auth = new \Social\Domain\Auth\AuthService(
-        new \Social\Domain\Auth\AuthRepository($db),
-    );
+    $auth = new \Social\Domain\Auth\AuthService(new \Social\Domain\Auth\AuthRepository($db));
 
     try {
         if ($r === '/api/register' && $m === 'POST') {
@@ -16,47 +13,34 @@ function handleAuthRoutes(string $r, string $m): bool
             $_SESSION['user_id'] = $userId;
             out(['user' => me(), 'csrf' => $_SESSION['csrf']]);
         }
-
         if ($r === '/api/login' && $m === 'POST') {
             rateLimit('login', clientKey(), 10, 900);
             $payload = b();
-            $user = $auth->authenticate(
-                (string) ($payload['email'] ?? ''),
-                (string) ($payload['password'] ?? ''),
-            );
+            $user = $auth->authenticate((string) ($payload['email'] ?? ''), (string) ($payload['password'] ?? ''));
             session_regenerate_id(true);
             $_SESSION['user_id'] = $user['id'];
             out(['user' => me(), 'csrf' => $_SESSION['csrf']]);
         }
-
         if ($r === '/api/logout' && $m === 'POST') {
             $_SESSION = [];
             session_destroy();
             out(['ok' => true]);
         }
-
-        if ($r === '/api/me' && $m === 'GET') {
-            out(['user' => me(), 'csrf' => $_SESSION['csrf']]);
-        }
-
+        if ($r === '/api/me' && $m === 'GET') out(['user' => me(), 'csrf' => $_SESSION['csrf']]);
         if ($r === '/api/me' && $m === 'PATCH') {
             $user = me();
             $auth->profileUpdate((int) $user['id'], b(), $user);
             out(['user' => me()]);
         }
-
         if ($r === '/api/settings' && $m === 'GET') {
             $user = me();
             out($auth->settings((int) $user['id']));
         }
-
         if ($r === '/api/settings' && $m === 'PATCH') {
             $user = me();
             $auth->updateSettings((int) $user['id'], b());
             out(['ok' => true]);
         }
-    } catch (\LogicException $e) {
-        out(['error' => $e->getMessage()], 403);
     } catch (\Social\Domain\Shared\ConflictException $e) {
         out(['error' => $e->getMessage()], 409);
     } catch (\InvalidArgumentException $e) {
