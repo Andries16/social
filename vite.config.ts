@@ -8,6 +8,7 @@ export default defineConfig({
     host: "0.0.0.0",
   },
   test: {
+    environment: "jsdom",
     exclude: ["node_modules/**", "dist/**", "tests/e2e/**"],
   },
 });
