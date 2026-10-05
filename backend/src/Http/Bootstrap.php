@@ -49,6 +49,7 @@ final class Bootstrap
         $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $db->exec('PRAGMA foreign_keys=ON');
 
+        require __DIR__ . '/Support.php';
         require __DIR__ . '/../../routes.php';
     }
 }
