@@ -8,6 +8,6 @@ export default defineConfig({
     host: "0.0.0.0",
   },
   test: {
-    exclude: ["tests/e2e/**"],
+    exclude: ["node_modules/**", "dist/**", "tests/e2e/**"],
   },
 });
