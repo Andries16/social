@@ -16,6 +16,14 @@ final class AuthRepository
         return $query->fetch() ?: null;
     }
 
+    public function emailExists(string $email): bool
+    {
+        $query = $this->db->prepare('SELECT 1 FROM users WHERE email=?');
+        $query->execute([$email]);
+
+        return (bool) $query->fetchColumn();
+    }
+
     public function createUser(string $name, string $email, string $passwordHash): int
     {
         $query = $this->db->prepare(
