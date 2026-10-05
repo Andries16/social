@@ -54,8 +54,8 @@ final class PostService
             );
         }
 
-        $media = array_values(array_filter(array_map('strval', (array) ($payload['media'] ?? []))));
-        if (count($media) > 10) throw new \InvalidArgumentException('A post can contain at most 10 images');
+        $media = $this->validateMedia($payload['media'] ?? []);
+
         $image = trim((string) ($payload['image'] ?? ($media[0] ?? '')));
         $this->posts->create($userId, $body, $image, $media);
     }
@@ -70,8 +70,8 @@ final class PostService
             );
         }
 
-        $media = array_values(array_filter(array_map('strval', (array) ($payload['media'] ?? []))));
-        if (count($media) > 10) throw new \InvalidArgumentException('A post can contain at most 10 images');
+        $media = $this->validateMedia($payload['media'] ?? []);
+
         $image = trim((string) ($payload['image'] ?? ($media[0] ?? '')));
         $this->posts->update($postId, $body, $image);
         $this->posts->replaceMedia($postId, $media);
@@ -130,6 +130,30 @@ final class PostService
     {
         $this->authorizeCommentOwner($userId, $commentId);
         $this->posts->deleteComment($commentId);
+    }
+
+    private function validateMedia(mixed $value): array
+    {
+        if (!is_array($value) || count($value) > 10) {
+            throw new \InvalidArgumentException('A post can contain at most 10 images');
+        }
+
+        $media = [];
+        foreach ($value as $url) {
+            $url = trim((string) $url);
+            if ($url === '' || mb_strlen($url) > 2048) {
+                throw new \InvalidArgumentException('Invalid post media URL');
+            }
+
+            $path = parse_url($url, PHP_URL_PATH);
+            if ($path === false || !str_starts_with((string) $path, '/uploads/')) {
+                throw new \InvalidArgumentException('Post media must reference an uploaded file');
+            }
+
+            $media[] = $url;
+        }
+
+        return $media;
     }
 
     private function authorizeOwner(int $userId, int $postId): void
