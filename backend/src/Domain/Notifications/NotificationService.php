@@ -13,6 +13,15 @@ final class NotificationService
         return ['notifications' => $this->notifications->listForUser($userId, 30)];
     }
 
+    public function notify(int $userId, string $type, int $actorId): void
+    {
+        if ($userId <= 0 || $actorId <= 0 || $userId === $actorId) {
+            return;
+        }
+
+        $this->notifications->create($userId, $type, $actorId);
+    }
+
     public function markRead(int $userId, int $notificationId): void
     {
         if ($notificationId <= 0 || !$this->notifications->belongsToUser($notificationId, $userId)) {
