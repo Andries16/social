@@ -3,9 +3,6 @@
 function handleUserRoutes(string $r, string $m): bool
 {
     global $db;
-    require_once __DIR__ . '/../../Domain/Users/UserRepository.php';
-    require_once __DIR__ . '/../../Domain/Users/UserService.php';
-
     $userService = new \Social\Domain\Users\UserService(
         new \Social\Domain\Users\UserRepository($db),
     );
