@@ -36,7 +36,7 @@ The frontend uses React + TypeScript + MUI. The backend uses PHP with SQLite for
 - [x] Feature-based React folders and reusable MUI components
 - [x] PHP controllers/services/repositories/validators (HTTP bootstrap, domain services/repositories, media storage and route adapters are separated)
 - [x] Database migration lifecycle
-- [ ] Centralized API validation and authorization (privacy-aware read authorization is now enforced on profiles, feed and stories; input bounds are now enforced server-side)
+- [x] Centralized API validation and authorization (domain services own input validation and authorization; route adapters only translate HTTP concerns)
 - [x] CSRF protection for all state-changing HTTP methods
 - [x] Secure session cookie configuration
 - [x] Rate limiting and abuse protection
