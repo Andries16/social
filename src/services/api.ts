@@ -8,7 +8,7 @@ export const api={me:async()=>{const r=await request<{user:User;csrf:string}>("/
   deleteComment:(id:number)=>request<{ok:boolean}>("/api/comments/"+id,{method:"DELETE"}),stories:()=>request<{stories:Story[]}>("/api/stories"),createStory:(text:string)=>request<{ok:boolean}>("/api/stories",{method:"POST",body:JSON.stringify({text})}),users:(q="")=>request<{users:User[]}>("/api/users?q="+encodeURIComponent(q)),messages:(userId:number)=>request<{messages:Message[]}>("/api/messages?user_id="+userId),sendMessage:(to_user_id:number,text:string)=>request<{ok:boolean}>("/api/messages",{method:"POST",body:JSON.stringify({to_user_id,text})}),notifications:()=>request<{notifications:Notification[]}>("/api/notifications"),
   markNotificationRead:(id:number)=>request<{ok:boolean}>("/api/notifications/"+id+"/read",{method:"POST"}),
   follow:(id:number)=>request<{ok:boolean}>("/api/users/"+id+"/follow",{method:"POST"}),
-  unfollow:(id:number)=>request<{ok:boolean}>("/api/users/"+id+"/follow",{method:"DELETE"}),
+  unfollow:(id:number)=>request<{ok:boolean}>("/api/users/"+id+"/follow",{method:"DELETE"}),followStatus:(id:number)=>request<{following:boolean}>("/api/users/"+id+"/follow"),
   storyView:(id:number)=>request<{ok:boolean}>("/api/stories/"+id+"/view",{method:"POST"}),updateProfile:(bio:string,avatar:string)=>request<{user:User}>("/api/me",{method:"PATCH",body:JSON.stringify({bio,avatar})}),
   settings:()=>request<{settings:{private_account:boolean;email_notifications:boolean}}>("/api/settings"),
   updateSettings:(settings:{private_account:boolean;email_notifications:boolean})=>request<{ok:boolean}>("/api/settings",{method:"PATCH",body:JSON.stringify(settings)}),
