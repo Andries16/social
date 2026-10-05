@@ -105,12 +105,35 @@ final class PostRepository
         return $comments;
     }
 
-    public function create(int $userId, string $body, string $image): void
+    public function create(int $userId, string $body, string $image, array $media = []): int
     {
         $query = $this->db->prepare(
             'INSERT INTO posts(user_id,body,image,created_at)VALUES(?,?,?,?)',
         );
         $query->execute([$userId, $body, $image, date('c')]);
+        $postId = (int) $this->db->lastInsertId();
+        $mediaQuery = $this->db->prepare('INSERT INTO post_media(post_id,url,media_type,position)VALUES(?,?,?,?)');
+        foreach (array_values($media) as $position => $url) {
+            $mediaQuery->execute([$postId, $url, 'image', $position]);
+        }
+        return $postId;
+    }
+
+    public function media(int $postId): array
+    {
+        $query = $this->db->prepare('SELECT url,media_type FROM post_media WHERE post_id=? ORDER BY position,id');
+        $query->execute([$postId]);
+        return $query->fetchAll();
+    }
+
+    public function replaceMedia(int $postId, array $media): void
+    {
+        $delete = $this->db->prepare('DELETE FROM post_media WHERE post_id=?');
+        $delete->execute([$postId]);
+        $insert = $this->db->prepare('INSERT INTO post_media(post_id,url,media_type,position)VALUES(?,?,?,?)');
+        foreach (array_values($media) as $position => $url) {
+            $insert->execute([$postId, $url, 'image', $position]);
+        }
     }
 
     public function update(int $postId, string $body, string $image): void
