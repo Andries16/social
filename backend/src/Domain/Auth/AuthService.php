@@ -44,6 +44,10 @@ final class AuthService
     {
         [$name, $email, $password] = $this->validateRegistration($payload);
 
+        if ($this->auth->emailExists($email)) {
+            throw new \RuntimeException('An account with this email already exists');
+        }
+
         return $this->auth->createUser(
             $name,
             $email,
