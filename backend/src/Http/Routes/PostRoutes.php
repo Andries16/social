@@ -4,12 +4,112 @@ function handlePostRoutes(string $r, string $m): bool
 {
     global $db;
 
-    if($r==='/api/posts'&&$m==='GET'){$u=me();$page=max(1,(int)($_GET['page']??1));$limit=min(50,max(1,(int)($_GET['limit']??10)));$offset=($page-1)*$limit;$q=$db->prepare('SELECT p.*,u.id uid,u.name,u.bio,u.avatar,(SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id) likes FROM posts p JOIN users u ON u.id=p.user_id WHERE COALESCE((SELECT private_account FROM user_settings s WHERE s.user_id=p.user_id),0)=0 OR p.user_id=? OR EXISTS(SELECT 1 FROM follows f WHERE f.follower_id=? AND f.following_id=p.user_id) ORDER BY p.id DESC LIMIT ? OFFSET ?');$q->bindValue(1,$u['id'],PDO::PARAM_INT);$q->bindValue(2,$u['id'],PDO::PARAM_INT);$q->bindValue(3,$limit+1,PDO::PARAM_INT);$q->bindValue(4,$offset,PDO::PARAM_INT);$q->execute();$ps=$q->fetchAll(PDO::FETCH_ASSOC);$hasMore=count($ps)>$limit;if($hasMore)array_pop($ps);foreach($ps as&$p){$q=$db->prepare('SELECT c.*,u.name,u.avatar FROM comments c JOIN users u ON u.id=c.user_id WHERE c.post_id=? ORDER BY c.id');$q->execute([$p['id']]);$comments=$q->fetchAll(PDO::FETCH_ASSOC);foreach($comments as&$comment)$comment['user']=['id'=>$comment['user_id'],'name'=>$comment['name'],'avatar'=>$comment['avatar']];$p['comments']=$comments;$p['user']=['id'=>$p['uid'],'name'=>$p['name'],'bio'=>$p['bio'],'avatar'=>$p['avatar']];}out(['posts'=>$ps,'page'=>$page,'hasMore'=>$hasMore]);}
-    if($r==='/api/posts'&&$m==='POST'){$u=me();rateLimit('post',(string)$u['id'],30,3600);$x=b();$body=trim((string)($x['body']??''));if($body===''||mb_strlen($body)>5000)out(['error'=>'Post text must contain between 1 and 5000 characters'],422);$q=$db->prepare('INSERT INTO posts(user_id,body,image,created_at)VALUES(?,?,?,?)');$q->execute([$u['id'],$body,trim((string)($x['image']??'')),date('c')]);out(['ok'=>true]);}
-    if(preg_match('#^/api/posts/(\d+)$#',$r,$x)&&in_array($m,['PATCH','DELETE'],true)){$u=me();$postId=(int)$x[1];$owner=$db->prepare('SELECT user_id FROM posts WHERE id=?');$owner->execute([$postId]);$ownerId=(int)$owner->fetchColumn();if(!$ownerId)out(['error'=>'Post not found'],404);if($ownerId!==$u['id'])out(['error'=>'Forbidden'],403);if($m==='DELETE'){$db->beginTransaction();try{$q=$db->prepare('DELETE FROM reactions WHERE post_id=?');$q->execute([$postId]);$q=$db->prepare('DELETE FROM comments WHERE post_id=?');$q->execute([$postId]);$q=$db->prepare('DELETE FROM notifications WHERE post_id=?');$q->execute([$postId]);$q=$db->prepare('DELETE FROM posts WHERE id=?');$q->execute([$postId]);$db->commit();out(['ok'=>true]);}catch(Throwable $e){$db->rollBack();throw $e;}}$x=b();$body=trim((string)($x['body']??''));if($body===''||mb_strlen($body)>5000)out(['error'=>'Post text must contain between 1 and 5000 characters'],422);$q=$db->prepare('UPDATE posts SET body=?,image=? WHERE id=?');$q->execute([$body,$x['image']??'',$postId]);out(['ok'=>true]);}
-    if(preg_match('#^/api/posts/(\d+)/react$#',$r,$x)&&$m==='POST'){$u=me();$postId=(int)$x[1];if(!canViewPost($postId,(int)$u['id']))out(['error'=>'Post not found'],404);$payload=b();$reaction=(string)($payload['reaction']??'like');if(!in_array($reaction,['like','love','laugh','wow','sad','angry'],true))out(['error'=>'Unsupported reaction'],422);$q=$db->prepare('INSERT INTO reactions(post_id,user_id,reaction)VALUES(?,?,?) ON CONFLICT(post_id,user_id) DO UPDATE SET reaction=excluded.reaction');$q->execute([$postId,$u['id'],$reaction]);$owner=$db->prepare('SELECT user_id FROM posts WHERE id=?');$owner->execute([$postId]);$ownerId=(int)$owner->fetchColumn();if($ownerId&&$ownerId!==$u['id']){$n=$db->prepare('INSERT INTO notifications(user_id,type,actor_id,post_id,created_at)VALUES(?,?,?,?,?)');$n->execute([$ownerId,'reacted_to_post',$u['id'],$postId,date('c')]);}out(['ok'=>true]);}
-    if(preg_match('#^/api/posts/(\d+)/comments$#',$r,$x)&&$m==='POST'){$u=me();$postId=(int)$x[1];if(!canViewPost($postId,(int)$u['id']))out(['error'=>'Post not found'],404);$payload=b();$text=trim((string)($payload['text']??''));if($text===''||mb_strlen($text)>2000)out(['error'=>'Comment must contain between 1 and 2000 characters'],422);rateLimit('comment',(string)$u['id'],60,3600);$q=$db->prepare('INSERT INTO comments(post_id,user_id,text,created_at)VALUES(?,?,?,?)');$q->execute([$postId,$u['id'],$text,date('c')]);$owner=$db->prepare('SELECT user_id FROM posts WHERE id=?');$owner->execute([$postId]);$ownerId=(int)$owner->fetchColumn();if($ownerId&&$ownerId!==$u['id']){$n=$db->prepare('INSERT INTO notifications(user_id,type,actor_id,post_id,created_at)VALUES(?,?,?,?,?)');$n->execute([$ownerId,'commented_on_post',$u['id'],$postId,date('c')]);}out(['ok'=>true]);}
-    if(preg_match('#^/api/comments/(\d+)$#',$r,$x)&&in_array($m,['PATCH','DELETE'],true)){$u=me();$commentId=(int)$x[1];$owner=$db->prepare('SELECT user_id FROM comments WHERE id=?');$owner->execute([$commentId]);$ownerId=(int)$owner->fetchColumn();if(!$ownerId)out(['error'=>'Comment not found'],404);if($ownerId!==$u['id'])out(['error'=>'Forbidden'],403);if($m==='DELETE'){$q=$db->prepare('DELETE FROM comments WHERE id=?');$q->execute([$commentId]);out(['ok'=>true]);}$payload=b();$text=trim((string)($payload['text']??''));if($text===''||mb_strlen($text)>2000)out(['error'=>'Comment must contain between 1 and 2000 characters'],422);$q=$db->prepare('UPDATE comments SET text=? WHERE id=?');$q->execute([$text,$commentId]);out(['ok'=>true]);}
-    
+    require_once __DIR__ . '/../../Domain/Posts/PostRepository.php';
+    require_once __DIR__ . '/../../Domain/Posts/PostService.php';
+
+    $posts = new \Social\Domain\Posts\PostService(
+        new \Social\Domain\Posts\PostRepository($db),
+    );
+
+    try {
+        if ($r === '/api/posts' && $m === 'GET') {
+            $u = me();
+            $page = max(1, (int) ($_GET['page'] ?? 1));
+            $limit = min(50, max(1, (int) ($_GET['limit'] ?? 10)));
+
+            out($posts->feed((int) $u['id'], $page, $limit));
+        }
+
+        if ($r === '/api/posts' && $m === 'POST') {
+            $u = me();
+            rateLimit('post', (string) $u['id'], 30, 3600);
+            $posts->create((int) $u['id'], b());
+            out(['ok' => true]);
+        }
+
+        if (preg_match('#^/api/posts/(\\d+)$#', $r, $x) && in_array($m, ['PATCH', 'DELETE'], true)) {
+            $u = me();
+            $postId = (int) $x[1];
+
+            if ($m === 'DELETE') {
+                $posts->delete((int) $u['id'], $postId);
+                out(['ok' => true]);
+            }
+
+            $posts->update((int) $u['id'], $postId, b());
+            out(['ok' => true]);
+        }
+
+        if (preg_match('#^/api/posts/(\\d+)/react$#', $r, $x) && $m === 'POST') {
+            $u = me();
+            $postId = (int) $x[1];
+            $posts->react((int) $u['id'], $postId, b());
+
+            $owner = $db->prepare('SELECT user_id FROM posts WHERE id=?');
+            $owner->execute([$postId]);
+            $ownerId = (int) $owner->fetchColumn();
+            if ($ownerId && $ownerId !== (int) $u['id']) {
+                $notification = $db->prepare(
+                    'INSERT INTO notifications(user_id,type,actor_id,post_id,created_at)
+                     VALUES(?,?,?,?,?)',
+                );
+                $notification->execute([
+                    $ownerId,
+                    'reacted_to_post',
+                    $u['id'],
+                    $postId,
+                    date('c'),
+                ]);
+            }
+
+            out(['ok' => true]);
+        }
+
+        if (preg_match('#^/api/posts/(\\d+)/comments$#', $r, $x) && $m === 'POST') {
+            $u = me();
+            $postId = (int) $x[1];
+            rateLimit('comment', (string) $u['id'], 60, 3600);
+            $posts->comment((int) $u['id'], $postId, b());
+
+            $owner = $db->prepare('SELECT user_id FROM posts WHERE id=?');
+            $owner->execute([$postId]);
+            $ownerId = (int) $owner->fetchColumn();
+            if ($ownerId && $ownerId !== (int) $u['id']) {
+                $notification = $db->prepare(
+                    'INSERT INTO notifications(user_id,type,actor_id,post_id,created_at)
+                     VALUES(?,?,?,?,?)',
+                );
+                $notification->execute([
+                    $ownerId,
+                    'commented_on_post',
+                    $u['id'],
+                    $postId,
+                    date('c'),
+                ]);
+            }
+
+            out(['ok' => true]);
+        }
+
+        if (preg_match('#^/api/comments/(\\d+)$#', $r, $x) && in_array($m, ['PATCH', 'DELETE'], true)) {
+            $u = me();
+            $commentId = (int) $x[1];
+
+            if ($m === 'DELETE') {
+                $posts->deleteComment((int) $u['id'], $commentId);
+                out(['ok' => true]);
+            }
+
+            $posts->updateComment((int) $u['id'], $commentId, b());
+            out(['ok' => true]);
+        }
+    } catch (\InvalidArgumentException $e) {
+        out(['error' => $e->getMessage()], 422);
+    } catch (\LogicException $e) {
+        out(['error' => $e->getMessage()], 403);
+    } catch (\RuntimeException $e) {
+        out(['error' => $e->getMessage()], 404);
+    }
+
     return false;
 }
