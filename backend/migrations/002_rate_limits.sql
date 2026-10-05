@@ -1,0 +1,6 @@
+CREATE TABLE rate_limits(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  rate_key TEXT UNIQUE NOT NULL,
+  window_start INTEGER NOT NULL,
+  request_count INTEGER NOT NULL
+);
