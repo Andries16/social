@@ -45,6 +45,7 @@ final class Bootstrap
             exit;
         }
 
+        global $db;
         $db = new \PDO('sqlite:' . __DIR__ . '/../../social.sqlite');
         $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $db->exec('PRAGMA foreign_keys=ON');
