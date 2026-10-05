@@ -27,6 +27,9 @@ test("authenticated user can publish a story, post and comment", async ({ page }
   await expect(page.getByLabel("Create a story")).toBeVisible({ timeout: 10000 });
   await page.getByLabel("Create a story").fill("E2E story");
   await page.getByRole("button", { name: "Story", exact: true }).click();
+  await expect(page.getByText("Social E2E User", { exact: true })).toBeVisible({
+    timeout: 10000,
+  });
 
   await page.getByLabel("What's on your mind?").fill("E2E post");
   await page.getByRole("button", { name: "Publish", exact: true }).click();
