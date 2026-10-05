@@ -9,11 +9,11 @@ function handleSocialGraphRoutes(string $r, string $m): bool
     );
 
     try {
-        if (preg_match('#^/api/users/(\\d+)/follow$#', $r, $x) && in_array($m, ['POST', 'DELETE'], true)) {
+        if (preg_match('#^/api/users/(\\d+)/follow$#', $r, $x) && in_array($m, ['GET', 'POST', 'DELETE'], true)) {
             $u = me();
             $targetId = (int) $x[1];
 
-            if ($m === 'POST') {
+            if ($m === 'GET') {\n                out(['following' => $graph->status((int) $u['id'], $targetId)]);\n            }\n\n            if ($m === 'POST') {
                 $created = $graph->follow((int) $u['id'], $targetId);
 
                 if ($created) {
