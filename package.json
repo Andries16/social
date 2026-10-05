@@ -1,8 +1,35 @@
 {
-  "name":"social-network",
-  "private":true,
-  "type":"module",
-  "scripts":{"dev":"vite","build":"tsc -b && vite build","test":"vitest run","e2e":"playwright test","storybook":"storybook dev -p 6006","build-storybook":"storybook build","check":"npm run build && npm test"},
-  "dependencies":{"@emotion/react":"latest","@emotion/styled":"latest","@mui/icons-material":"latest","@mui/material":"latest","react":"latest","react-dom":"latest"},
-  "devDependencies":{"@playwright/test":"latest","@storybook/addon-essentials":"latest","@storybook/react-vite":"latest","@types/react":"latest","@types/react-dom":"latest","@vitejs/plugin-react":"latest","jsdom":"latest","storybook":"latest","typescript":"latest","vite":"latest","vitest":"latest"}
+  "name": "social-network",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "test": "vitest run",
+    "e2e": "playwright test",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "check": "npm run build && npm test"
+  },
+  "dependencies": {
+    "@emotion/react": "latest",
+    "@emotion/styled": "latest",
+    "@mui/icons-material": "latest",
+    "@mui/material": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest",
+    "@storybook/addon-essentials": "10.6.1",
+    "@storybook/react-vite": "10.6.1",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "latest",
+    "jsdom": "latest",
+    "storybook": "10.6.1",
+    "typescript": "latest",
+    "vite": "latest",
+    "vitest": "latest"
+  }
 }
