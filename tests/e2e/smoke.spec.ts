@@ -31,7 +31,7 @@ test("authenticated user can publish a story, post and comment", async ({ page }
   await page.getByLabel("What's on your mind?").fill("E2E post");
   await page.getByRole("button", { name: "Publish", exact: true }).click();
 
-  const post = page.getByText("E2E post", { exact: true }).locator("..").locator("..").locator("..");
+  const post = page.locator(".MuiCard-root").filter({ hasText: "E2E post" }).first();
   await expect(post).toContainText("E2E post", { timeout: 10000 });
   const comment = post.getByPlaceholder("Write a comment...");
   await comment.fill("E2E comment");
