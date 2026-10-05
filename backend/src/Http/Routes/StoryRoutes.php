@@ -4,9 +4,6 @@ function handleStoryRoutes(string $r, string $m): bool
 {
     global $db;
 
-    require_once __DIR__ . '/../../Domain/Stories/StoryRepository.php';
-    require_once __DIR__ . '/../../Domain/Stories/StoryService.php';
-
     $stories = new \Social\Domain\Stories\StoryService(
         new \Social\Domain\Stories\StoryRepository($db),
     );
@@ -14,7 +11,7 @@ function handleStoryRoutes(string $r, string $m): bool
     try {
         if ($r === '/api/stories' && $m === 'GET') {
             $u = me();
-            out($stories->list((int) $u['id']));
+            out(['stories' => $stories->list((int) $u['id'])]);
         }
 
         if ($r === '/api/stories' && $m === 'POST') {
