@@ -17,15 +17,14 @@ function handleSocialGraphRoutes(string $r, string $m): bool
                 $created = $graph->follow((int) $u['id'], $targetId);
 
                 if ($created) {
-                    $notification = $db->prepare(
-                        'INSERT INTO notifications(user_id,type,actor_id,created_at)VALUES(?,?,?,?)',
+                    $notifications = new \Social\Domain\Notifications\NotificationService(
+                        new \Social\Domain\Notifications\NotificationRepository($db),
                     );
-                    $notification->execute([
+                    $notifications->notify(
                         $targetId,
                         'started_following_you',
-                        $u['id'],
-                        date('c'),
-                    ]);
+                        (int) $u['id'],
+                    );
                 }
 
                 out(['ok' => true]);
