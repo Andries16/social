@@ -8,7 +8,7 @@ final class PostService
 {
     private const REACTIONS = ['like', 'love', 'laugh', 'wow', 'sad', 'angry'];
 
-    public function __construct(private PostRepository $posts) {}
+    public function __construct(private PostRepository $posts, private \Social\Domain\Media\MediaService $media) {}
 
     public function feed(int $viewerId, int $page, int $limit): array
     {
@@ -37,7 +37,7 @@ final class PostService
     {
         $body = trim((string) ($payload['body'] ?? ''));
         if ($body === '' || mb_strlen($body) > 5000) throw new \InvalidArgumentException('Post text must contain between 1 and 5000 characters');
-        $media = $this->validateMedia($payload['media'] ?? []);
+        $media = $this->validateMedia($userId, $payload['media'] ?? []);
         $image = trim((string) ($payload['image'] ?? ($media[0] ?? '')));
         $this->posts->create($userId, $body, $image, $media);
     }
@@ -89,7 +89,7 @@ final class PostService
         $this->posts->deleteComment($commentId);
     }
 
-    private function validateMedia(mixed $value): array
+    private function validateMedia(int $userId, mixed $value): array
     {
         if (!is_array($value) || count($value) > 10) throw new \InvalidArgumentException('A post can contain at most 10 images');
         $media = [];
