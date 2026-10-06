@@ -50,11 +50,11 @@ final class StoryRepository
     public function canView(int $storyId, int $viewerId): bool
     {
         $query = $this->db->prepare(
-            'SELECT s.user_id,
+            "SELECT s.user_id,
                     COALESCE((SELECT private_account FROM user_settings WHERE user_id=s.user_id),0)
                         private_account
              FROM stories s
-             WHERE s.id=? AND datetime(s.created_at) >= datetime('now','-1 day')',
+             WHERE s.id=? AND datetime(s.created_at) >= datetime('now','-1 day')",
         );
         $query->execute([$storyId]);
         $story = $query->fetch();
