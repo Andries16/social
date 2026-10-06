@@ -17,8 +17,8 @@ function handleStoryRoutes(string $r, string $m): bool
         if ($r === '/api/stories' && $m === 'POST') {
             $u = me();
             rateLimit('story', (string) $u['id'], 20, 86400);
-            $stories->create((int) $u['id'], b());
-            out(['ok' => true]);
+            $storyId = $stories->create((int) $u['id'], b());
+            out(['ok' => true, 'id' => $storyId]);
         }
 
         if (preg_match('#^/api/stories/(\\d+)/view$#', $r, $x) && $m === 'POST') {
