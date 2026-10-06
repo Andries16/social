@@ -13,17 +13,19 @@ import { api } from "../services/api";
 export function NotificationMenu() {
   const [items, setItems] = useState<Notification[]>([]);
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     void api
       .notifications()
       .then((result) => setItems(result.notifications))
-      .catch(() => {});
+      .catch((e) => setError(e instanceof Error ? e.message : "Unable to load notifications"));
   }, []);
 
   const markRead = async (notification: Notification) => {
     if (!notification.read_at) {
-      await api.markNotificationRead(notification.id);
+      try {
+        await api.markNotificationRead(notification.id);
       setItems((current) =>
         current.map((item) =>
           item.id === notification.id
@@ -31,6 +33,9 @@ export function NotificationMenu() {
             : item,
         ),
       );
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Unable to mark notification as read");
+      }
     }
   };
 
@@ -52,7 +57,7 @@ export function NotificationMenu() {
         open={Boolean(anchor)}
         onClose={() => setAnchor(null)}
       >
-        {items.length ? (
+        {error ? <MenuItem>{error}</MenuItem> : items.length ? (
           items.map((notification) => (
             <MenuItem
               key={notification.id}
