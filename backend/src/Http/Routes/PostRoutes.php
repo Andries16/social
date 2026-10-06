@@ -3,7 +3,10 @@
 function handlePostRoutes(string $r, string $m): bool
 {
     global $db;
-    $posts = new \Social\Domain\Posts\PostService(new \Social\Domain\Posts\PostRepository($db));
+    $posts = new \Social\Domain\Posts\PostService(
+        new \Social\Domain\Posts\PostRepository($db),
+        new \Social\Domain\Media\MediaService(new \Social\Domain\Media\MediaRepository($db, __DIR__ . '/../../../uploads')),
+    );
     $notifications = new \Social\Domain\Notifications\NotificationService(new \Social\Domain\Notifications\NotificationRepository($db));
 
     try {
