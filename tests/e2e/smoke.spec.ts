@@ -50,3 +50,26 @@ test("authenticated user can publish a story, post and comment", async ({ page }
   await post.getByRole("button", { name: "Comment" }).click();
   await expect(post.getByText("E2E comment", { exact: true })).toBeVisible({ timeout: 10000 });
 });
+
+
+test("authenticated user can update account settings", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Create an account" }).click();
+  await page.getByLabel("Name").fill("Settings E2E User");
+  await page.getByLabel("Email").fill("settings-e2e-" + Date.now() + "@example.test");
+  await page.getByLabel("Password").fill("password");
+  await page.getByRole("button", { name: "Create account", exact: true }).click();
+
+  await expect(page.getByLabel("What's on your mind?")).toBeVisible({ timeout: 10000 });
+  await page.getByRole("button", { name: "Settings" }).click();
+  await expect(page.getByText("Account settings", { exact: true })).toBeVisible({ timeout: 10000 });
+
+  const privateSwitch = page.getByLabel("Private account");
+  await privateSwitch.check();
+  await page.getByRole("button", { name: "Save changes", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save changes", exact: true })).toBeEnabled({ timeout: 10000 });
+
+  await page.reload();
+  await page.getByRole("button", { name: "Settings" }).click();
+  await expect(page.getByLabel("Private account")).toBeChecked({ timeout: 10000 });
+});
