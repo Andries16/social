@@ -118,7 +118,6 @@ export function ProfilePage({
             {isOwner && (
               <>
                 <TextField fullWidth multiline minRows={3} label="Bio" value={bio} onChange={(e) => setBio(e.target.value)} />
-                <TextField fullWidth label="Profile photo URL" value={avatar} onChange={(e) => setAvatar(e.target.value)} />
                 <Button component="label" variant="outlined" fullWidth disabled={uploading}>
                   {uploading ? "Uploading…" : "Upload profile photo"}
                   <input hidden type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => {
