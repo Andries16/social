@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Stack, TextField } from "@mui/material";
+import { Alert, Button, Stack, TextField } from "@mui/material";
 import type { Story, User } from "../types";
 import { api } from "../services/api";
 
@@ -11,23 +11,34 @@ export function StoryComposer({
   onCreated: (story: Story) => void;
 }) {
   const [text, setText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   async function submit() {
     const value = text.trim();
-    if (!value) return;
+    if (!value || submitting) return;
 
-    const result = await api.createStory(value);
-    setText("");
-    onCreated({
+    try {
+      setError("");
+      setSubmitting(true);
+      const result = await api.createStory(value);
+      setText("");
+      onCreated({
       id: result.id,
       text: value,
       created_at: new Date().toISOString(),
-      user,
-    });
+        user,
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to create story");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
-    <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+    <Stack spacing={1} direction={{ xs: "column", sm: "row" }}>
+      {error && <Alert severity="error">{error}</Alert>}
       <TextField
         fullWidth
         size="small"
@@ -35,7 +46,7 @@ export function StoryComposer({
         value={text}
         onChange={(event) => setText(event.target.value)}
       />
-      <Button variant="outlined" onClick={() => void submit()}>
+      <Button disabled={submitting} variant="outlined" onClick={() => void submit()}>
         Story
       </Button>
     </Stack>
