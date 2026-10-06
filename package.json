@@ -27,6 +27,9 @@
     "@vitejs/plugin-react": "latest",
     "jsdom": "latest",
     "storybook": "10.6.1",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "latest",
     "typescript": "latest",
     "vite": "latest",
     "vitest": "latest"
