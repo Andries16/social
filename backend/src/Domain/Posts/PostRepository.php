@@ -49,7 +49,7 @@ final class PostRepository
     {
         $offset = ($page - 1) * $limit;
         $query = $this->db->prepare(
-            'SELECT p.*,u.id uid,u.name,u.bio,u.avatar,
+            "SELECT p.*,u.id uid,u.name,u.bio,u.avatar,
                     (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id) likes,
                     (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id AND r.reaction='like') reaction_like,
                     (SELECT COUNT(*) FROM reactions r WHERE r.post_id=p.id AND r.reaction='love') reaction_love,
@@ -66,7 +66,7 @@ final class PostRepository
                     WHERE f.follower_id=? AND f.following_id=p.user_id
                 )
              ORDER BY p.id DESC
-             LIMIT ? OFFSET ?',
+             LIMIT ? OFFSET ?",
         );
         $query->bindValue(1, $viewerId, \PDO::PARAM_INT);
         $query->bindValue(2, $viewerId, \PDO::PARAM_INT);
