@@ -26,7 +26,13 @@ test("authenticated user can publish a story, post and comment", async ({ page }
 
   await expect(page.getByLabel("Create a story")).toBeVisible({ timeout: 10000 });
   await page.getByLabel("Create a story").fill("E2E story");
+  const storyResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes("/api/stories") &&
+      response.request().method() === "POST",
+  );
   await page.getByRole("button", { name: "Story", exact: true }).click();
+  await expect((await storyResponse).status()).toBe(200);
   await expect(page.getByText("Social E2E User", { exact: true })).toBeVisible({
     timeout: 10000,
   });
