@@ -47,7 +47,7 @@ final class PostService
         $this->authorizeOwner($userId, $postId);
         $body = trim((string) ($payload['body'] ?? ''));
         if ($body === '' || mb_strlen($body) > 5000) throw new \InvalidArgumentException('Post text must contain between 1 and 5000 characters');
-        $media = $this->validateMedia($payload['media'] ?? []);
+        $media = $this->validateMedia($userId, $payload['media'] ?? []);
         $image = trim((string) ($payload['image'] ?? ($media[0] ?? '')));
         $this->posts->update($postId, $body, $image);
         $this->posts->replaceMedia($postId, $media);
@@ -96,9 +96,9 @@ final class PostService
         foreach ($value as $url) {
             $url = trim((string) $url);
             if ($url === '' || mb_strlen($url) > 2048) throw new \InvalidArgumentException('Invalid post media URL');
-            $path = parse_url($url, PHP_URL_PATH);
-            if ($path === false || !str_starts_with((string) $path, '/uploads/')) throw new \InvalidArgumentException('Post media must reference an uploaded file');
-            $media[] = $url;
+            $ownedUrl = $this->media->ownedUrl($userId, $url);
+            if ($ownedUrl === null) throw new \InvalidArgumentException('Post media must reference an upload owned by the current user');
+            $media[] = $ownedUrl;
         }
         return $media;
     }
