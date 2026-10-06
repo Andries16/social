@@ -79,7 +79,7 @@ export function FeedPage({ user }: { user: User }) {
             void api.storyView(story.id);
           }}
         />
-        <StoryComposer onCreated={() => void load()} />
+        <StoryComposer user={user} onCreated={(story) => setStories((current) => [story, ...current.filter((item) => item.id !== story.id)])} />
         <CreatePostCard onCreated={() => void load()} />
         {error && <Alert severity="error">{error}</Alert>}
         {posts.map((post) => (
