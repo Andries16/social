@@ -47,7 +47,10 @@ export function SettingsPage({ user, onUpdate }: { user: User; onUpdate: (u: Use
             ) : (
               <>
                 <TextField label="Bio" multiline minRows={3} value={bio} onChange={(e) => setBio(e.target.value)} />
-                <TextField label="Profile photo URL" value={avatar} onChange={(e) => setAvatar(e.target.value)} />
+                <Button component="label" variant="outlined" disabled={saving}>
+                  Upload profile photo
+                  <input hidden type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => { const file = e.target.files?.[0]; if (file) void api.uploadMedia(file).then((result) => setAvatar(result.url)).catch((error) => setError(error instanceof Error ? error.message : "Unable to upload profile photo")); }} />
+                </Button>
                 <FormControlLabel control={<Switch checked={privateAccount} onChange={(e) => setPrivateAccount(e.target.checked)} />} label="Private account" />
                 <FormControlLabel control={<Switch checked={emailNotifications} onChange={(e) => setEmailNotifications(e.target.checked)} />} label="Email notifications" />
                 <Button variant="contained" disabled={saving} onClick={() => void save()}>{saving ? "Saving…" : "Save changes"}</Button>
