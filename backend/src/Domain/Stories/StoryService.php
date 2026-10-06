@@ -13,14 +13,14 @@ final class StoryService
         return $this->stories->listVisible($viewerId);
     }
 
-    public function create(int $userId, array $payload): void
+    public function create(int $userId, array $payload): int
     {
         $text = trim((string) ($payload['text'] ?? ''));
         if ($text === '' || mb_strlen($text) > 1000) {
             throw new \InvalidArgumentException('Story text must contain between 1 and 1000 characters');
         }
 
-        $this->stories->create($userId, $text);
+        return $this->stories->create($userId, $text);
     }
 
     public function view(int $viewerId, int $storyId): void
