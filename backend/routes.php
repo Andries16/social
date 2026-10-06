@@ -29,9 +29,9 @@ try {
         $u = me();
         rateLimit('media', (string) $u['id'], 20, 3600);
         $media = new \Social\Domain\Media\MediaService(
-            new \Social\Domain\Media\MediaRepository(__DIR__ . '/uploads'),
+            new \Social\Domain\Media\MediaRepository($db, __DIR__ . '/uploads'),
         );
-        $name = $media->upload($_FILES['file'] ?? []);
+        $name = $media->upload((int) $u['id'], $_FILES['file'] ?? []);
         $scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $baseUrl = rtrim(getenv('SOCIAL_PUBLIC_URL') ?: $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'), '/');
         out(['url' => $baseUrl . '/uploads/' . rawurlencode($name)]);
