@@ -9,11 +9,15 @@ function handleSocialGraphRoutes(string $r, string $m): bool
     );
 
     try {
-        if (preg_match('#^/api/users/(\\d+)/follow$#', $r, $x) && in_array($m, ['GET', 'POST', 'DELETE'], true)) {
+        if (preg_match('#^/api/users/(\d+)/follow$#', $r, $x) && in_array($m, ['GET', 'POST', 'DELETE'], true)) {
             $u = me();
             $targetId = (int) $x[1];
 
-            if ($m === 'GET') {\n                out(['following' => $graph->status((int) $u['id'], $targetId)]);\n            }\n\n            if ($m === 'POST') {
+            if ($m === 'GET') {
+                out(['following' => $graph->status((int) $u['id'], $targetId)]);
+            }
+
+            if ($m === 'POST') {
                 $created = $graph->follow((int) $u['id'], $targetId);
 
                 if ($created) {
@@ -35,7 +39,7 @@ function handleSocialGraphRoutes(string $r, string $m): bool
         }
 
         if (
-            preg_match('#^/api/users/(\\d+)/(followers|following)$#', $r, $x)
+            preg_match('#^/api/users/(\d+)/(followers|following)$#', $r, $x)
             && $m === 'GET'
         ) {
             me();
