@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS media(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  storage_name TEXT NOT NULL UNIQUE,
+  mime_type TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_media_user_id ON media(user_id);
