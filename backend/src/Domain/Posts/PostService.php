@@ -38,7 +38,7 @@ final class PostService
         $body = trim((string) ($payload['body'] ?? ''));
         if ($body === '' || mb_strlen($body) > 5000) throw new \InvalidArgumentException('Post text must contain between 1 and 5000 characters');
         $media = $this->validateMedia($userId, $payload['media'] ?? []);
-        $image = trim((string) ($payload['image'] ?? ($media[0] ?? '')));
+        $image = $this->validateImage($userId, $payload['image'] ?? ($media[0] ?? ''));
         $this->posts->create($userId, $body, $image, $media);
     }
 
@@ -48,7 +48,7 @@ final class PostService
         $body = trim((string) ($payload['body'] ?? ''));
         if ($body === '' || mb_strlen($body) > 5000) throw new \InvalidArgumentException('Post text must contain between 1 and 5000 characters');
         $media = $this->validateMedia($userId, $payload['media'] ?? []);
-        $image = trim((string) ($payload['image'] ?? ($media[0] ?? '')));
+        $image = $this->validateImage($userId, $payload['image'] ?? ($media[0] ?? ''));
         $this->posts->update($postId, $body, $image);
         $this->posts->replaceMedia($postId, $media);
     }
@@ -101,6 +101,15 @@ final class PostService
             $media[] = $ownedUrl;
         }
         return $media;
+    }
+
+    private function validateImage(int $userId, mixed $value): string
+    {
+        $url = trim((string) $value);
+        if ($url === '') return '';
+        $ownedUrl = $this->media->ownedUrl($userId, $url);
+        if ($ownedUrl === null) throw new \InvalidArgumentException('Post image must reference an upload owned by the current user');
+        return $ownedUrl;
     }
 
     private function authorizeOwner(int $userId, int $postId): void
