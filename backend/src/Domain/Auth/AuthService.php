@@ -4,7 +4,7 @@ namespace Social\Domain\Auth;
 
 final class AuthService
 {
-    public function __construct(private AuthRepository $auth)
+    public function __construct(private AuthRepository $auth, private \Social\Domain\Media\MediaService $media)
     {
     }
 
@@ -70,6 +70,14 @@ final class AuthService
 
         if (mb_strlen($avatar) > 2048) {
             throw new \InvalidArgumentException('Avatar URL is too long');
+        }
+
+        if (array_key_exists('avatar', $payload) && $avatar !== '') {
+            $ownedAvatar = $this->media->ownedUrl($userId, $avatar);
+            if ($ownedAvatar === null) {
+                throw new \InvalidArgumentException('Avatar must reference an upload owned by the current user');
+            }
+            $avatar = $ownedAvatar;
         }
 
         $this->auth->updateProfile($userId, $bio, $avatar);
