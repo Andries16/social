@@ -3,7 +3,12 @@
 function handleAuthRoutes(string $r, string $m): bool
 {
     global $db;
-    $auth = new \Social\Domain\Auth\AuthService(new \Social\Domain\Auth\AuthRepository($db));
+    $auth = new \Social\Domain\Auth\AuthService(
+        new \Social\Domain\Auth\AuthRepository($db),
+        new \Social\Domain\Media\MediaService(
+            new \Social\Domain\Media\MediaRepository($db, __DIR__ . '/../../../uploads'),
+        ),
+    );
 
     try {
         if ($r === '/api/register' && $m === 'POST') {
