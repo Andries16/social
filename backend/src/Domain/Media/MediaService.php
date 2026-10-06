@@ -8,8 +8,14 @@ final class MediaService
     {
     }
 
-    public function upload(array $file): string
+    public function upload(int $userId, array $file): string
     {
-        return $this->media->store($file);
+        return $this->media->store($userId, $file);
+    }
+
+    public function ownedUrl(int $userId, string $url): ?string
+    {
+        $name = $this->media->ownedStorageName($userId, $url);
+        return $name === null ? null : '/uploads/' . rawurlencode($name);
     }
 }
