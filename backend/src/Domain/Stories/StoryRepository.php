@@ -39,7 +39,7 @@ final class StoryRepository
         return $stories;
     }
 
-    public function create(int $userId, string $text): void
+    public function create(int $userId, string $text): int
     {
         $query = $this->db->prepare(
             'INSERT INTO stories(user_id,text,created_at) VALUES(?,?,?)',
