@@ -45,6 +45,8 @@ final class StoryRepository
             'INSERT INTO stories(user_id,text,created_at) VALUES(?,?,?)',
         );
         $query->execute([$userId, $text, date('c')]);
+
+        return (int) $this->db->lastInsertId();
     }
 
     public function canView(int $storyId, int $viewerId): bool
